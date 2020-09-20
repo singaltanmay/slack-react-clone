@@ -4,7 +4,6 @@ import { SignIn } from ".";
 function App() {
   return (
     <div className="App">
-      Hello, world!
       <SignIn />
     </div>
   );
