@@ -24,3 +24,19 @@ code {
   text-align: center;
   font-size: 25px;
 }
+
+.sidebar {
+  align-items: center;
+  justify-content: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  border: 1px solid red;
+  width: 25px;
+  height: 25px;
+}
