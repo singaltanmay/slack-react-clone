@@ -1,12 +1,13 @@
 import React from "react";
-import { SignIn } from ".";
+import { SignIn, Slack } from ".";
 import { Switch, Route } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
       <Switch>
-        <Route exact path="/" component={SignIn} />
+        <Route exact path="/" component={Slack} />
+        <Route exact path="/auth" component={SignIn} />
       </Switch>
     </div>
   );
