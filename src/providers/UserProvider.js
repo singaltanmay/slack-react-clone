@@ -1,38 +1,39 @@
-import { auth, createOrGetUserProfileDocument } from '../firebase';
-import React, { Component, createContext } from 'react';
+import { auth, createOrGetUserProfileDocument } from "../firebase";
+import React, { Component, createContext } from "react";
 
-const initialUserState = { user: null, loading: false };
+const initialUserState = { user: null, loading: true };
 export const UserContext = createContext(initialUserState);
 
 class UserProvider extends Component {
+  state = initialUserState;
 
-    state = initialUserState;
+  componentDidMount = async () => {
+    /* Will be fired whenever user goes from loggedin to log out state or vice versa */
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth) {
+        const userRef = await createOrGetUserProfileDocument(userAuth);
 
-    async componentDidMount() {
-        auth.onAuthStateChanged(async (userAuth) => {
-            console.log(userAuth);
-            if (userAuth) {
-                const userRef = await createOrGetUserProfileDocument(userAuth);
-                console.log("userRef", userRef);
-                userRef.onSnapshot(snapshot => {
-                    console.log("snapshot", snapshot);
-                    console.log("snapshot data", snapshot.data());
-                    this.setState({
-                        user: { uid: snapshot.id, ...snapshot.data() },
-                        loading: false
-                    })
-                })
-            }
-        })
-    }
+        // Attach listener to listen to user changes in firestore
+        userRef.onSnapshot((snapshot) => {
+          this.setState({
+            user: { uid: snapshot.id, ...snapshot.data() },
+            loading: false,
+          });
+        });
+      }
+      this.setState({ user: userAuth, loading: false });
+    });
+  };
 
-    render() {
-        return (
-            <UserContext.Provider value={this.state}>
-                {this.props.children}
-            </UserContext.Provider>
-        )
-    }
+  render() {
+    const { user, loading } = this.state;
+    const { children } = this.props;
+    return (
+      <UserContext.Provider value={{ user, loading }}>
+        {children}
+      </UserContext.Provider>
+    );
+  }
 }
 
 export default UserProvider;
